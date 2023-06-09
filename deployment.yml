@@ -5,7 +5,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  resouces:
+  resources:
     requests:
       storage: 10Gi
   storageClassName: standard-rwo
@@ -19,28 +19,28 @@ spec:
   selector:
     matchLabels:
       app: mysql
-    template:
-      metadata:
-        labels:
-          app: mysql
-      spec:
-        containers:
-          - image: gabriel/k8s-project-database:1.0
-            args:
-              - "--ignore-db-dir=lost+found"
-            imagePullPolicy: Always
-            name: mysql
-            ports:
-              - containerPort: 3306
-                name: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - image: gabgalera/k8s-project-database:1.0
+          args:
+            - "--ignore-db-dir=lost+found"
+          imagePullPolicy: Always
+          name: mysql
+          ports:
+            - containerPort: 3306
+              name: mysql
 
-            volumeMounts:
-              - name: mysql-dados
-                mountPath: /var/lib/mysql/
-          volumes:
-          - name: mysql-dados
-            PersistentVolumeClaim:
-              claimName: mysql-dados
+          volumeMounts:
+            - name: mysql-dados
+              mountPath: /var/lib/mysql/
+      volumes:
+        - name: mysql-dados
+          persistentVolumeClaim:
+            claimName: mysql-dados
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -59,8 +59,8 @@ spec:
         app: php
     spec:
       containers:
-      - name: php
-        image: gabriel/k8s-project-backend:1.0
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 80
+        - name: php
+          image: gabgalera/k8s-project-backend:1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
